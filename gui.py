@@ -65,7 +65,6 @@ class Window(QDialog):
             # setting lay out
             self.setLayout(mainLayout)
       def getRhymes(self):
-            print(self.user_input.text())
             # Print the chosen word
             print("Chosen Word: {0}".format(self.user_input.text()))
             main.main(self.user_input.text())

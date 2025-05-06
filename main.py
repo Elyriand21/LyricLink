@@ -11,7 +11,6 @@ import subprocess
 rhymes = []
 
 def main(word):
-    print(f"URL: https://www.rhymezone.com/r/rhyme.cgi?Word={word}&typeofrhyme=perfect&org1=syl&org2=l&org3=y")
     res = requests.get(f"https://www.rhymezone.com/r/rhyme.cgi?Word={word}&typeofrhyme=perfect&org1=syl&org2=l&org3=y")
     try:
         res.raise_for_status()
