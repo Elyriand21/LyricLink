@@ -4,6 +4,8 @@
 #
 #           TO-DO
 #     • Create the labels to display what the purpose of the software is
+#     • Create function that determines how many labels to add based on length of collected_rhymes, adds the labels to self.frame.
+#       Beyond the first label, change the wording to reflect pluraity: "1 syllable" vs "2 syllables"
 #
 ##############################################
 
@@ -93,7 +95,6 @@ class Window(QDialog):
                         self.collected_rhymes = main.main(self.user_input.text())
                   else:
                         print("Error: No rhymes found")
-                  #print(self.collected_rhymes[0])
 
             self.addLabel(0, 50)
       def clearText(self):
