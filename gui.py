@@ -8,7 +8,7 @@
 ##############################################
 
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 import main
@@ -23,6 +23,11 @@ class Window(QDialog):
             self.setWindowTitle("RhymeBot")
             # Set size
             self.setFixedSize(self.WIDTH,self.HEIGHT)
+            # Creates the window icon
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("assets/rhymebot_logo.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+            # Sets the window icon
+            self.setWindowIcon(icon)
             # Create a group box to house all of the components
             self.formGroupBox = QGroupBox("Form Name Placeholder")
             # Create an area for the user input
