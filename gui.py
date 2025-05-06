@@ -14,11 +14,6 @@ from PyQt5.QtCore import Qt
 import main
 import sys
 
-def prompt():
-      text, ok = QInputDialog.getText(None, "RhymeBot", "Please enter your word here")
-      global chosen_word
-      chosen_word = text
-
 class Window(QDialog):
       WIDTH = 1000
       HEIGHT = 1000
