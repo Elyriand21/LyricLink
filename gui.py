@@ -131,35 +131,6 @@ class Window(QDialog):
       def debug(self):
             print("User Input: ", self.user_input.text())
 
-# def window():
-#     win.setFixedSize(WIDTH,HEIGHT)
-#     win.setWindowTitle("RhymeBot")
-#     center(win)
-#     main_screen_labels(win)
-#     print("Chosen Word: ", chosen_word)
-#     main.main(chosen_word)
-#     win.show()
-#     sys.exit(app.exec_())
-
-# def main_screen_labels(window):
-#       title = QtWidgets.QLabel(window)
-#       title.setGeometry(0,0,240,500)
-#       title.setStyleSheet("QLabel{font-size: 13pt;}")
-#       title.setText("Rhyme Bot")
-#       title.setAlignment(Qt.AlignCenter)
-#       title.move(( 1000 - title.width() ) // 2, -150)
-
-#       desc = QtWidgets.QLabel(window)
-#       desc.setGeometry(0,0,200,200)
-#       desc.setStyleSheet("QLabel{font-size: 8pt;}")
-#       desc.setText("Software to help break writer's block")
-#       desc.setAlignment(Qt.AlignCenter)
-#       desc.move(( 1000 - desc.width() ) // 2, 20)
-
-      
-#       window.addRow(QtWidgets.QLabel("Choose Word: "), user_input)
-
-
 
 if __name__ == '__main__':
       # Instantiate our application
