@@ -74,7 +74,7 @@ class Window(QDialog):
             self.new_label.show()
       def getRhymes(self):
             if len(self.user_input.text()) == 0:
-                  print("Error: No word chosen")
+                  print("Error: No word chosen. Please input a word")
                   return
             # Print the chosen word
             else:
