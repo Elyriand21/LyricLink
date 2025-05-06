@@ -1,8 +1,8 @@
-# TO-DO
-# Design GUI
-# Make script state how many syllables each section contains
-# Display the words in the GUI
-# Create an input section for the user to type the word they want the rhyme for
+################################
+#          TO-DO
+#   • Create the function the parses through rhymeSections and separates the rhymes by "," and adds the individual rhymes into the rhymes array
+#       Currently - main.py groups based on syllables but has no way of separating by individual rhyme
+
 
 
 import requests, bs4, sys
