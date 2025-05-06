@@ -56,6 +56,7 @@ python gui.py
 - [ ] Display rhyming results inside the GUI
 - [ ] Improve error handling for missing input or failed rhyme search
 - [ ] Add UI styling and enhancements
+- [ ] Create an executable file to minimize the technical knowledge of the user
 
 ---
 
