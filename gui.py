@@ -1,15 +1,20 @@
+###############################################
+#           RhymeBot Application
+#     Software to help break writer's block
+#
+#           TO-DO
+#     • Configure the clear button to actually clear
+#       the text rather than just the variable
+#
+##############################################
+
+
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QInputDialog
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 import main
-import pyautogui
 import sys
 
-from qtpy import QT5
-
-app = QApplication(sys.argv)
-win = QMainWindow()
-chosen_word = ""
 
 def center(self):
         qr = self.frameGeometry()
@@ -17,40 +22,104 @@ def center(self):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-
-
 def prompt():
       text, ok = QInputDialog.getText(None, "RhymeBot", "Please enter your word here")
       global chosen_word
       chosen_word = text
+
+class Window(QDialog):
+      WIDTH = 1000
+      HEIGHT = 1000
+      def __init__(self):
+            super(Window, self).__init__()
+            # Set Window Title
+            self.setWindowTitle("RhymeBot")
+            # Set size
+            self.setFixedSize(self.WIDTH,self.HEIGHT)
+            # Create a group box to house all of the components
+            self.formGroupBox = QGroupBox("Form Name Placeholder")
+            # Create an area for the user input
+            self.user_input = QLineEdit()
+            # Function that builds the form
+            self.createForm()
+            # Create the box to hold the buttons
+            self.buttonBox = QDialogButtonBox()
+            # Create the buttons
+            self.searchButton: QPushButton = QPushButton("Search")
+            self.clearButton: QPushButton = QPushButton("Clear")
+            self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
+            # Add them to the button box
+            self.buttonBox.addButton(self.searchButton, QDialogButtonBox.ActionRole)
+            self.buttonBox.addButton(self.clearButton, QDialogButtonBox.ActionRole)
+            # Connect buttons to form
+            self.searchButton.clicked.connect(self.getRhymes)     # When search button is clicked
+            self.cancelButton.clicked.connect(self.reject)  # When cancel button is clicked
+            self.clearButton.clicked.connect(self.clearText)
+            # Whenever the search button is clicked, do getRhymes
+            self.buttonBox.accepted.connect(self.getRhymes)
+            # creating a vertical layout
+            mainLayout = QVBoxLayout()
+            # adding form group box to the layout
+            mainLayout.addWidget(self.formGroupBox)
+            # adding button box to the layout
+            mainLayout.addWidget(self.buttonBox)
+            # setting lay out
+            self.setLayout(mainLayout)
+      def getRhymes(self):
+            print(self.user_input)
+            # Print the chosen word
+            print("Chosen Word: {0}".format(self.user_input.text))
+            main.main(self.user_input.text())
+      def clearText(self):
+            # Clears the user_input field
+            self.user_input.clear()
+            self.user_input.text = " "
+      def createForm(self):
+            # Create form layout
+            layout = QFormLayout()
+            #Adds row for user input
+            layout.addRow(QLabel("Enter your word here: "), self.user_input)
+            # Adds row for display
+            layout.addRow(QLabel("Placeholder"))
+            # Setting the layout
+            self.formGroupBox.setLayout(layout)
+
+# def window():
+#     win.setFixedSize(WIDTH,HEIGHT)
+#     win.setWindowTitle("RhymeBot")
+#     center(win)
+#     main_screen_labels(win)
+#     print("Chosen Word: ", chosen_word)
+#     main.main(chosen_word)
+#     win.show()
+#     sys.exit(app.exec_())
+
+# def main_screen_labels(window):
+#       title = QtWidgets.QLabel(window)
+#       title.setGeometry(0,0,240,500)
+#       title.setStyleSheet("QLabel{font-size: 13pt;}")
+#       title.setText("Rhyme Bot")
+#       title.setAlignment(Qt.AlignCenter)
+#       title.move(( 1000 - title.width() ) // 2, -150)
+
+#       desc = QtWidgets.QLabel(window)
+#       desc.setGeometry(0,0,200,200)
+#       desc.setStyleSheet("QLabel{font-size: 8pt;}")
+#       desc.setText("Software to help break writer's block")
+#       desc.setAlignment(Qt.AlignCenter)
+#       desc.move(( 1000 - desc.width() ) // 2, 20)
+
       
+#       window.addRow(QtWidgets.QLabel("Choose Word: "), user_input)
 
-def window():
-    WIDTH = 1000
-    HEIGHT = 1000
-    win.setFixedSize(WIDTH,HEIGHT)
-    win.setWindowTitle("RhymeBot")
-    center(win)
-    main_screen_labels(win)
-    print("Chosen Word: ", chosen_word)
-    main.main(chosen_word)
-    win.show()
-    sys.exit(app.exec_())
 
-def main_screen_labels(window):
-      title = QtWidgets.QLabel(window)
-      title.setGeometry(0,0,240,500)
-      title.setStyleSheet("QLabel{font-size: 13pt;}")
-      title.setText("Rhyme Bot")
-      title.setAlignment(Qt.AlignCenter)
-      title.move(( 1000 - title.width() ) // 2, -150)
 
-      desc = QtWidgets.QLabel(window)
-      desc.setGeometry(0,0,200,200)
-      desc.setStyleSheet("QLabel{font-size: 8pt;}")
-      desc.setText("Software to help break writer's block")
-      desc.setAlignment(Qt.AlignCenter)
-      desc.move(( 1000 - desc.width() ) // 2, 20)
-
-prompt()
-window()
+if __name__ == '__main__':
+      # Instantiate our application
+      app = QApplication(sys.argv)
+      # Instantiate our window
+      win = Window()
+      # Show the window
+      win.show()
+      # Start the app
+      sys.exit(app.exec())
