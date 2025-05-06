@@ -29,10 +29,12 @@ class Window(QDialog):
             # Sets the window icon
             self.setWindowIcon(icon)
             # Create a group box to house all of the components
-            self.formGroupBox = QGroupBox("Form Name Placeholder")
+            self.frame = QFrame()
             # Create an area for the user input
             self.user_input = QLineEdit()
             self.user_input.textChanged.connect(self.handleTextChange)
+            self.user_input.setMinimumWidth(10)
+            self.user_input.setMaximumWidth(50)
             # Function that builds the form
             self.createForm()
             # Create the box to hold the buttons
@@ -58,16 +60,28 @@ class Window(QDialog):
             self.buttonBox.accepted.connect(self.getRhymes)
             # creating a vertical layout
             mainLayout = QVBoxLayout()
+
             # adding form group box to the layout
-            mainLayout.addWidget(self.formGroupBox)
+            mainLayout.addWidget(self.frame)
             # adding button box to the layout
             mainLayout.addWidget(self.buttonBox)
             # setting lay out
             self.setLayout(mainLayout)
+      def addLabel(self):
+            self.new_label = QtWidgets.QLabel(self.frame)
+            self.new_label.setGeometry(0,50, 50, 50)
+            self.new_label.setText("New Label created")
+            self.new_label.show()
       def getRhymes(self):
+            if len(self.user_input.text()) == 0:
+                  print("Error: No word chosen")
+                  return
             # Print the chosen word
-            print("Chosen Word: {0}".format(self.user_input.text()))
-            main.main(self.user_input.text())
+            else:
+                  print("Chosen Word: {0}".format(self.user_input.text()))
+                  main.main(self.user_input.text())
+
+            self.addLabel()
       def clearText(self):
             # Clears the user_input field
             self.user_input.clear()
@@ -78,7 +92,7 @@ class Window(QDialog):
             #Adds row for user input
             layout.addRow(QLabel("Enter your word here: "), self.user_input)
             # Setting the layout
-            self.formGroupBox.setLayout(layout)
+            self.frame.setLayout(layout)
       def handleTextChange(self):
             user_input = self.user_input
       def debug(self):
