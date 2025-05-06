@@ -32,10 +32,17 @@ class Window(QDialog):
             self.formGroupBox = QGroupBox("Form Name Placeholder")
             # Create an area for the user input
             self.user_input = QLineEdit()
+            self.user_input.textChanged.connect(self.handleTextChange)
             # Function that builds the form
             self.createForm()
             # Create the box to hold the buttons
             self.buttonBox = QDialogButtonBox()
+
+            #DEBUG BUTTON
+            self.debugButton: QPushButton = QPushButton("Debug")
+            self.buttonBox.addButton(self.debugButton, QDialogButtonBox.ActionRole)
+            self.debugButton.clicked.connect(self.debug)
+
             # Create the buttons
             self.searchButton: QPushButton = QPushButton("Search")
             self.clearButton: QPushButton = QPushButton("Clear")
@@ -58,9 +65,9 @@ class Window(QDialog):
             # setting lay out
             self.setLayout(mainLayout)
       def getRhymes(self):
-            print(self.user_input)
+            print(self.user_input.text())
             # Print the chosen word
-            print("Chosen Word: {0}".format(self.user_input.text))
+            print("Chosen Word: {0}".format(self.user_input.text()))
             main.main(self.user_input.text())
       def clearText(self):
             # Clears the user_input field
@@ -71,10 +78,12 @@ class Window(QDialog):
             layout = QFormLayout()
             #Adds row for user input
             layout.addRow(QLabel("Enter your word here: "), self.user_input)
-            # Adds row for display
-            layout.addRow(QLabel("Placeholder"))
             # Setting the layout
             self.formGroupBox.setLayout(layout)
+      def handleTextChange(self):
+            user_input = self.user_input
+      def debug(self):
+            print("User Input: ", self.user_input.text())
 
 # def window():
 #     win.setFixedSize(WIDTH,HEIGHT)
