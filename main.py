@@ -28,7 +28,7 @@ def main(word):
     for rhyme in rhymeSections:
         rhymes.append(rhyme.getText().split(":")[1])
 
-    print(rhymes[0])
+    return rhymes
 
 # DEBUG PURPOSES
 # Opens a console that prints out whatever is within rhymes[index]

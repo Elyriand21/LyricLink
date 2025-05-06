@@ -17,8 +17,12 @@ import sys
 class Window(QDialog):
       WIDTH = 1000
       HEIGHT = 1000
+
+      collected_rhymes = []
       def __init__(self):
             super(Window, self).__init__()
+            # Creates the initial state
+            self.new_label = None
             # Set Window Title
             self.setWindowTitle("RhymeBot")
             # Set size
@@ -67,11 +71,16 @@ class Window(QDialog):
             mainLayout.addWidget(self.buttonBox)
             # setting lay out
             self.setLayout(mainLayout)
-      def addLabel(self):
-            self.new_label = QtWidgets.QLabel(self.frame)
-            self.new_label.setGeometry(0,50, 50, 50)
-            self.new_label.setText("New Label created")
-            self.new_label.show()
+      def addLabel(self, target_x, target_y):
+            if not self.new_label:
+                  self.new_label = QtWidgets.QLabel(self.frame)
+                  self.new_label.setText("New Label created")
+                  self.new_label.setGeometry(target_x,target_y, len(self.new_label.text()) * 3, 50)
+                  self.new_label.show()
+            else:
+                  self.new_label.clear()
+                  self.new_label.setText("Updated label")
+                  self.new_label.setGeometry(target_x,target_y, 70, 50)
       def getRhymes(self):
             if len(self.user_input.text()) == 0:
                   print("Error: No word chosen. Please input a word")
@@ -79,9 +88,14 @@ class Window(QDialog):
             # Print the chosen word
             else:
                   print("Chosen Word: {0}".format(self.user_input.text()))
-                  main.main(self.user_input.text())
+                  # Sets the rhymes returned by the webscrape to the colleted_rhymes array
+                  if len(main.main(self.user_input.text())) != 0:
+                        self.collected_rhymes = main.main(self.user_input.text())
+                  else:
+                        print("Error: No rhymes found")
+                  #print(self.collected_rhymes[0])
 
-            self.addLabel()
+            self.addLabel(0, 50)
       def clearText(self):
             # Clears the user_input field
             self.user_input.clear()
