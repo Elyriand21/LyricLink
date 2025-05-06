@@ -3,8 +3,7 @@
 #     Software to help break writer's block
 #
 #           TO-DO
-#     • Configure the clear button to actually clear
-#       the text rather than just the variable
+#     • Create the labels to display what the purpose of the software is
 #
 ##############################################
 
@@ -14,13 +13,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 import main
 import sys
-
-
-def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
 
 def prompt():
       text, ok = QInputDialog.getText(None, "RhymeBot", "Please enter your word here")
