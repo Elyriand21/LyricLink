@@ -67,11 +67,11 @@ class Window(QDialog):
             # creating a vertical layout
             mainLayout = QVBoxLayout()
 
-            # adding form group box to the layout
+            # Adding form group box to the layout
             mainLayout.addWidget(self.frame)
-            # adding button box to the layout
+            # Adding button box to the layout
             mainLayout.addWidget(self.buttonBox)
-            # setting lay out
+            # Setting lay out
             self.setLayout(mainLayout)
       def addLabel(self, target_x, target_y):
             if not self.new_label:
@@ -84,8 +84,20 @@ class Window(QDialog):
                   self.new_label.setText("Updated label")
                   self.new_label.setGeometry(target_x,target_y, 70, 50)
       def getRhymes(self):
+            # Sets the error text for no rhyme error
+            def setErrorText(self, error_code: str):
+                  # 1 is No Rhymes Found
+                  if error_code == "noRhyme":
+                        self.new_label.setText("Error: No Rhymes Found")
+                        self.new_label.setFixedWidth(300)
+                  elif error_code == "noWordChosen":
+                        self.new_label.setText("Error: No Word Chosen")
+                        self.new_label.setFixedWidth(300)
+            
+            # If the user does not put a word
             if len(self.user_input.text()) == 0:
-                  print("Error: No word chosen. Please input a word")
+                  self.addLabel(0, 50)
+                  setErrorText(self, "noWordChosen")
                   return
             # Print the chosen word
             else:
@@ -93,10 +105,16 @@ class Window(QDialog):
                   # Sets the rhymes returned by the webscrape to the colleted_rhymes array
                   if len(main.main(self.user_input.text())) != 0:
                         self.collected_rhymes = main.main(self.user_input.text())
+                        self.addLabel(0, 50)
                   else:
-                        print("Error: No rhymes found")
+                        if not self.new_label:
+                              self.addLabel(0, 50)
+                              setErrorText(self,"noRhyme")
+                        else:
+                              print("Cleared label")
+                              self.new_label.clear()
+                              setErrorText(self,"noRhyme")
 
-            self.addLabel(0, 50)
       def clearText(self):
             # Clears the user_input field
             self.user_input.clear()
