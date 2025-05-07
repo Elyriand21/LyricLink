@@ -4,8 +4,7 @@
 #
 #           TO-DO
 #     • Create the labels to display what the purpose of the software is
-#     • Create function that determines how many labels to add based on length of collected_rhymes, adds the labels to self.frame.
-#       Beyond the first label, change the wording to reflect pluraity: "1 syllable" vs "2 syllables"
+#     • Fix the issue with the program crashing after searching twice
 #
 ##############################################
 
@@ -23,8 +22,12 @@ class Window(QDialog):
       collected_rhymes = []
       def __init__(self):
             super(Window, self).__init__()
-            # Creates the initial state
-            self.new_label = None
+            # Creates an array to hold created labels
+            self.created_label = []
+
+            self.new_label = QLabel()
+            # Sets value for number of added labels
+            self.finishedAddingLabels = False
             # Set Window Title
             self.setWindowTitle("RhymeBot")
             # Set size
@@ -73,47 +76,72 @@ class Window(QDialog):
             mainLayout.addWidget(self.buttonBox)
             # Setting lay out
             self.setLayout(mainLayout)
-      def addLabel(self, target_x, target_y):
-            if not self.new_label:
-                  self.new_label = QtWidgets.QLabel(self.frame)
-                  self.new_label.setText("New Label created")
-                  self.new_label.setGeometry(target_x,target_y, len(self.new_label.text()) * 3, 50)
-                  self.new_label.show()
+      # Function to handle adding labels
+      def addLabels(self, target_x, target_y):
+            quantity = len(self.collected_rhymes)
+            started = False
+            print(f"Start: {self.finishedAddingLabels}")
+            for syllableAmount in range(quantity):
+                  # If for some reason, it combines "almost" rhymes with "perfect" rhymes on page, stop the for loop
+                  if started == True and self.collected_rhymes[syllableAmount][0:10] == "1 syllable":
+                        break
+                  # If you've already searched and search again, remove labels
+                  if self.finishedAddingLabels == True:
+                        for label in self.created_label:
+                              # print(label.parent())
+                              label.deleteLater()
+                              # print(f"Destroyed label: {label}")
+                        print("Finished Deleting labels")
+                        break
+                  else:
+                        print("Creating Labels...")
+                        label = QtWidgets.QLabel(self.frame)
+                        # If it's a 1 syllable
+                        if int(self.collected_rhymes[syllableAmount][0:2].strip()) == 1:
+                              label.setText(self.collected_rhymes[syllableAmount][0:11])
+                        # If it's any syllable > 1 but < 10
+                        elif int(self.collected_rhymes[syllableAmount][0:2].strip()) != 1 and int(self.collected_rhymes[syllableAmount][0:2].strip()) < 10:
+                              label.setText(self.collected_rhymes[syllableAmount][0:12])
+                        # If it's any syllable amount > 10
+                        elif int(self.collected_rhymes[syllableAmount][0:2].strip()) != 1 and int(self.collected_rhymes[syllableAmount][0:2].strip()) > 10:
+                              label.setText(self.collected_rhymes[syllableAmount][0:13])
+                        label.setGeometry(0, (50 + (10 * syllableAmount)), (len(label.text()) + 100), 50)
+                        label.show()
+                        self.created_label.append(label)
+                        if started == False:
+                              started = True
+            # If you've cleared all the labels, call the function again to add the new labels
+            if self.finishedAddingLabels == True:
+                  print("Telling the program you wanna add new labels")
+                  self.finishedAddingLabels = False
+                  print("Calling addLabels again...")
+                  self.addLabels(0,50)
             else:
-                  self.new_label.clear()
-                  self.new_label.setText("Updated label")
-                  self.new_label.setGeometry(target_x,target_y, 70, 50)
+                  print("You're done adding labels")
+                  self.finishedAddingLabels = not self.finishedAddingLabels
       def getRhymes(self):
             # Sets the error text for no rhyme error
-            def setErrorText(self, error_code: str):
-                  # 1 is No Rhymes Found
-                  if error_code == "noRhyme":
-                        self.new_label.setText("Error: No Rhymes Found")
-                        self.new_label.setFixedWidth(300)
-                  elif error_code == "noWordChosen":
-                        self.new_label.setText("Error: No Word Chosen")
-                        self.new_label.setFixedWidth(300)
+            def showError(self, text):
+                  msg = QMessageBox()
+                  msg.setWindowTitle("Error")
+                  msg.setText(text)
+                  msg.setIcon(QMessageBox.Question)
+                  msg.setStandardButtons(QMessageBox.Ok)
+                  msg.setDefaultButton(QMessageBox.Ok)
+                  x = msg.exec_()
             
             # If the user does not put a word
             if len(self.user_input.text()) == 0:
-                  self.addLabel(0, 50)
-                  setErrorText(self, "noWordChosen")
-                  return
+                  showError(self, "Please input a word")
             # Print the chosen word
             else:
                   print("Chosen Word: {0}".format(self.user_input.text()))
-                  # Sets the rhymes returned by the webscrape to the colleted_rhymes array
+                  # If rhymes exist
                   if len(main.main(self.user_input.text())) != 0:
                         self.collected_rhymes = main.main(self.user_input.text())
-                        self.addLabel(0, 50)
+                        self.addLabels(0, 50)
                   else:
-                        if not self.new_label:
-                              self.addLabel(0, 50)
-                              setErrorText(self,"noRhyme")
-                        else:
-                              print("Cleared label")
-                              self.new_label.clear()
-                              setErrorText(self,"noRhyme")
+                        showError(self, "No rhymes found")
 
       def clearText(self):
             # Clears the user_input field
