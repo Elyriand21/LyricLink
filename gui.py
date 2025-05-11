@@ -20,7 +20,7 @@ class Window(QDialog):
     HEIGHT = 1000
 
     collected_rhymes = []
-
+    
     def __init__(self):
         super(Window, self).__init__()
         self.created_label = []
@@ -89,6 +89,7 @@ class Window(QDialog):
                   # Remove the syllable count from the rhyme label
                   parts = item.split()
                   word_only = ' '.join(parts[2:]) if len(parts) > 1 else item
+                  print(word_only)
 
                   label = QLabel(word_only)
                   label.setWordWrap(True)
