@@ -77,30 +77,32 @@ class Window(QDialog):
       def addLabels(self, target_x, target_y):
             quantity = len(self.collected_rhymes)
             started = False
+            current_y = target_y
+            frame_width = self.frame.width()
+            padding = 20
+
             for i in range(quantity):
-                  if started == True and self.collected_rhymes[i][0:10] == "1 syllable":
+                  if started and self.collected_rhymes[i][0:10] == "1 syllable":
                         break
+
                   rhyme_text = self.collected_rhymes[i]
+                  print(rhyme_text)
 
                   label = QtWidgets.QLabel(self.frame)
+                  label.setWordWrap(True)
+                  label.setText(rhyme_text)
+                  label.setFixedWidth(frame_width - padding)
 
-                  # Safely extract syllable count substring
-                  syllable = rhyme_text[0:2].strip()
-                  try:
-                        syllable_int = int(syllable)
-                        if syllable_int == 1:
-                              label.setText(rhyme_text[0:11])
-                        elif syllable_int < 10:
-                              label.setText(rhyme_text[0:12])
-                        else:
-                              label.setText(rhyme_text[0:13])
-                  except ValueError:
-                        label.setText(rhyme_text)
+                  label.adjustSize()
+                  height = label.sizeHint().height()
 
-                  label.setGeometry(0, (50 + (10 * i)), len(label.text()) + 100, 50)
+                  label.setGeometry(target_x, current_y, frame_width - padding, height)
                   label.show()
+
                   self.created_label.append(label)
-                  if started == False:
+                  current_y += height + 10
+
+                  if not started:
                         started = True
       def getRhymes(self):
             def showError(self, text):
