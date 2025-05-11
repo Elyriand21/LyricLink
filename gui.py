@@ -15,20 +15,53 @@ from PyQt5.QtCore import Qt
 import main
 import sys
 
-class Window(QDialog):
+class IntroWindow(QDialog):
+    WIDTH = 500
+    HEIGHT = 300
+    def __init__(self):
+        super(IntroWindow, self).__init__()
+        self.setWindowTitle("LyricLink")
+        self.setFixedSize(self.WIDTH, self.HEIGHT)
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("assets\lyriclink.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        self.setWindowIcon(icon)
+
+        self.buttonBox = QDialogButtonBox()
+
+        self.rhymesButton = QPushButton("Rhymes", self)
+        self.rhymesButton.clicked.connect(self.goToRhymes)
+        self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
+        self.cancelButton.clicked.connect(self.reject)
+        self.cancelButton.setAutoDefault(False)
+
+        self.buttonBox.addButton(self.rhymesButton, QDialogButtonBox.ActionRole)
+
+        mainLayout = QVBoxLayout()
+        mainLayout.addStretch(1)
+        mainLayout.addWidget(self.buttonBox)
+        mainLayout.setAlignment(self.buttonBox, Qt.AlignCenter)
+        self.setLayout(mainLayout)
+    def goToRhymes(self):
+         self.w = RhymeWindow()
+         self.w.show()
+         self.hide()
+     
+
+class RhymeWindow(QDialog):
     WIDTH = 1000
     HEIGHT = 1000
 
     collected_rhymes = []
     
     def __init__(self):
-        super(Window, self).__init__()
+        super(RhymeWindow, self).__init__()
         self.created_label = []
         self.setWindowTitle("LyricLink")
         self.setFixedSize(self.WIDTH, self.HEIGHT)
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/lyriclink_logo.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap("assets\lyriclink.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
         self.setWindowIcon(icon)
 
         # Scroll Area Setup
@@ -54,12 +87,13 @@ class Window(QDialog):
         # Buttons
         self.buttonBox = QDialogButtonBox()
         self.searchButton: QPushButton = QPushButton("Search")
-        self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
+        self.backButton: QPushButton = QPushButton("Back")
         self.buttonBox.addButton(self.searchButton, QDialogButtonBox.ActionRole)
+        self.buttonBox.addButton(self.backButton, QDialogButtonBox.ActionRole)
 
         self.searchButton.clicked.connect(self.getRhymes)
-        self.cancelButton.clicked.connect(self.reject)
-        self.cancelButton.setAutoDefault(False)
+        self.backButton.clicked.connect(self.goToIntro)
+        self.backButton.setAutoDefault(False)
         self.buttonBox.accepted.connect(self.getRhymes)
         self.searchButton.setDefault(True)
 
@@ -69,6 +103,11 @@ class Window(QDialog):
         mainLayout.addWidget(self.scroll_area)
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
+
+    def goToIntro(self):
+         self.w = IntroWindow()
+         self.w.show()
+         self.hide()
 
     def addLabels(self):
       quantity = len(self.collected_rhymes)
@@ -183,6 +222,9 @@ class Window(QDialog):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    win = Window()
+    # win = RhymeWindow()
+    win = IntroWindow()
     win.show()
     sys.exit(app.exec())
+
+
