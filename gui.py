@@ -86,6 +86,11 @@ class Window(QDialog):
                         break
 
                   rhyme_text = self.collected_rhymes[i]
+
+                  # Add space after colon if missing
+                  if ":" in rhyme_text and not rhyme_text[rhyme_text.index(":") + 1] == " ":
+                        rhyme_text = rhyme_text.replace(":", ": ")
+
                   print(rhyme_text)
 
                   label = QtWidgets.QLabel(self.frame)
