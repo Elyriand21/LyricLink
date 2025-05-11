@@ -1,6 +1,6 @@
-# 📝 RhymeBot
+# 📝 LyricLink
 
-**RhymeBot** is a simple GUI application built with PyQt5 that allows users to input a word and search for its rhymes.
+**LyricLink** is a simple GUI application built with PyQt5 to help overcome writer's block by suggesting rhymes for a given word. The application groups rhymes based on syllable count for better organization and presents them in an intuitive interface. This software was developed by **Felix Banks**.
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
 ![PyQt5](https://img.shields.io/badge/PyQt5-GUI-green.svg)
@@ -10,53 +10,34 @@
 
 ## ✨ Features
 
-- 🎨 Clean PyQt5 GUI
-- 🔠 Input field for entering a word
-- 🔘 Buttons for:
-  - **Search**: Fetch rhymes for the entered word
-  - **Clear**: Reset the input field
-  - **Cancel**: Close the application
-
----
-
-## 📦 Requirements
-
-- Python 3.x
-- PyQt5
-
-Install dependencies via pip:
-
-```bash
-pip install PyQt5
-```
+- 🎨 Clean and user-friendly PyQt5 GUI
+- 📜 Rhymes displayed in groups based on syllable count for easy navigation
+- ⚙️ Improved error handling for missing input or failed rhyme searches
 
 ---
 
 ## 🚀 Usage
 
-1. Run the application:
+1. Execute the application by running the following:
 
-```bash
-python gui.py
-```
+    ```bash
+    lyriclink.exe
+    ```
 
-2. Enter a word in the input field and click **Search** to get rhymes.
+2. Enter a word and click **Search** to find rhymes.
 
 ---
 
 ## 📝 Notes
 
-- The GUI currently includes placeholder labels and text — these can be customized.
-- Rhyming results are printed to the console.
+- The application organizes rhymes by syllable count, displaying them directly in the GUI, sorted by syllable count.
+- The **Search** button triggers a search for rhymes, and results are dynamically updated in the GUI.
 
 ---
 
 ## 📌 To-Do
 
-- [ ] Display rhyming results inside the GUI
-- [ ] Improve error handling for missing input or failed rhyme search
-- [ ] Add UI styling and enhancements
-- [ ] Create an executable file to minimize the technical knowledge of the user
+- [ ] Improve UI styling and responsiveness
 
 ---
 
@@ -64,3 +45,5 @@ python gui.py
 
 This project is licensed under the **Apache License 2.0**.  
 See the [LICENSE](LICENSE) file for details.
+
+---
