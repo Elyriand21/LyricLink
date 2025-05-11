@@ -49,11 +49,6 @@ class Window(QDialog):
             # Create the box to hold the buttons
             self.buttonBox = QDialogButtonBox()
 
-            # #DEBUG BUTTON
-            # self.debugButton: QPushButton = QPushButton("Debug")
-            # self.buttonBox.addButton(self.debugButton, QDialogButtonBox.ActionRole)
-            # self.debugButton.clicked.connect(self.debug)
-
             # Create the buttons
             self.searchButton: QPushButton = QPushButton("Search")
             self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
@@ -79,15 +74,24 @@ class Window(QDialog):
       def addLabels(self, target_x, target_y):
             quantity = len(self.collected_rhymes)
             started = False
+            previous_syllable_count = None
             current_y = target_y
             frame_width = self.frame.width()
             padding = 20
 
             for i in range(quantity):
-                  if started and self.collected_rhymes[i][0:10] == "1 syllable":
-                        break
-
                   rhyme_text = self.collected_rhymes[i]
+
+                  # Parse syllable count safely
+                  try:
+                        current_syllable_count = int(rhyme_text.split()[0])
+                  except (ValueError, IndexError):
+                        continue  # skip malformed entry
+
+                  # Exit if next section has lower syllable count
+                  if previous_syllable_count is not None and current_syllable_count < previous_syllable_count:
+                        print(f"Stopping: {current_syllable_count} < {previous_syllable_count}")
+                        break
 
                   # Add space after colon if missing
                   if ":" in rhyme_text and not rhyme_text[rhyme_text.index(":") + 1] == " ":
@@ -109,8 +113,8 @@ class Window(QDialog):
                   self.created_label.append(label)
                   current_y += height + 10
 
-                  if not started:
-                        started = True
+                  previous_syllable_count = current_syllable_count
+                  started = True
       def getRhymes(self):
             def showError(self, text):
                   msg = QMessageBox()
@@ -140,11 +144,6 @@ class Window(QDialog):
             except Exception as e:
                   showError(self, "Something weird happened... Try again")
             
-
-      def clearText(self):
-            # Clears the user_input field
-            self.user_input.clear()
-            self.user_input.text = " "
       def createForm(self):
             # Create form layout
             layout = QFormLayout()
@@ -153,9 +152,7 @@ class Window(QDialog):
             # Setting the layout
             self.frame.setLayout(layout)
       def handleTextChange(self):
-            user_input = self.user_input
-      def debug(self):
-            print("User Input: ", self.user_input.text())
+            self.user_input = self.user_input
 
 
 if __name__ == '__main__':
