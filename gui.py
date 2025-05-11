@@ -49,10 +49,10 @@ class Window(QDialog):
             # Create the box to hold the buttons
             self.buttonBox = QDialogButtonBox()
 
-            #DEBUG BUTTON
-            self.debugButton: QPushButton = QPushButton("Debug")
-            self.buttonBox.addButton(self.debugButton, QDialogButtonBox.ActionRole)
-            self.debugButton.clicked.connect(self.debug)
+            # #DEBUG BUTTON
+            # self.debugButton: QPushButton = QPushButton("Debug")
+            # self.buttonBox.addButton(self.debugButton, QDialogButtonBox.ActionRole)
+            # self.debugButton.clicked.connect(self.debug)
 
             # Create the buttons
             self.searchButton: QPushButton = QPushButton("Search")
@@ -62,8 +62,10 @@ class Window(QDialog):
             # Connect buttons to form
             self.searchButton.clicked.connect(self.getRhymes)     # When search button is clicked
             self.cancelButton.clicked.connect(self.reject)  # When cancel button is clicked
+            self.cancelButton.setAutoDefault(False)
             # Whenever the search button is clicked, do getRhymes
             self.buttonBox.accepted.connect(self.getRhymes)
+            self.searchButton.setDefault(True)  # Make the search button the default button to execute when Enter is pressed
             # creating a vertical layout
             mainLayout = QVBoxLayout()
 
