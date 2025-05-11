@@ -56,15 +56,12 @@ class Window(QDialog):
 
             # Create the buttons
             self.searchButton: QPushButton = QPushButton("Search")
-            self.clearButton: QPushButton = QPushButton("Clear")
             self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
             # Add them to the button box
             self.buttonBox.addButton(self.searchButton, QDialogButtonBox.ActionRole)
-            self.buttonBox.addButton(self.clearButton, QDialogButtonBox.ActionRole)
             # Connect buttons to form
             self.searchButton.clicked.connect(self.getRhymes)     # When search button is clicked
             self.cancelButton.clicked.connect(self.reject)  # When cancel button is clicked
-            self.clearButton.clicked.connect(self.clearText)
             # Whenever the search button is clicked, do getRhymes
             self.buttonBox.accepted.connect(self.getRhymes)
             # creating a vertical layout
@@ -115,21 +112,25 @@ class Window(QDialog):
                   msg.setDefaultButton(QMessageBox.Ok)
                   x = msg.exec_()
 
-            if len(self.user_input.text()) == 0:
-                  showError(self, "Please input a word")
-            else:
-                  print("Chosen Word: {0}".format(self.user_input.text()))
-                  rhymes = main.main(self.user_input.text())
-                  if len(rhymes) != 0:
-                        # Clear any existing labels
-                        for label in self.created_label:
-                              label.deleteLater()
-                        self.created_label.clear()
-
-                        self.collected_rhymes = rhymes
-                        self.addLabels(0, 50)
+            try:
+                  if len(self.user_input.text()) == 0:
+                        showError(self, "Please input a word")
                   else:
-                        showError(self, "No rhymes found")
+                        print("Chosen Word: {0}".format(self.user_input.text()))
+                        rhymes = main.main(self.user_input.text())
+                        if len(rhymes) != 0:
+                              # Clear any existing labels
+                              for label in self.created_label:
+                                    label.deleteLater()
+                              self.created_label.clear()
+
+                              self.collected_rhymes = rhymes
+                              self.addLabels(0, 50)
+                        else:
+                              showError(self, "No rhymes found")
+            except Exception as e:
+                  showError(self, "Something weird happened... Try again")
+            
 
       def clearText(self):
             # Clears the user_input field
