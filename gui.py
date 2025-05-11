@@ -258,8 +258,6 @@ class RhymeWindow(QDialog):
         self.frame = QFrame()
         self.frame.setLayout(layout)
 
-        print("Made this just to push the changes")
-
     def confirmExit(self):
         msg = QMessageBox()
         msg.setWindowTitle("Confirmation")
@@ -274,7 +272,6 @@ class RhymeWindow(QDialog):
         msg.deleteLater()
 
         if msg.clickedButton() is yes:
-             print("made it")
              self.close()
 
 if __name__ == '__main__':
