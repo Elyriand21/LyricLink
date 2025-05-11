@@ -64,7 +64,7 @@ class IntroWindow(QDialog):
         'No', QtWidgets.QMessageBox.AcceptRole)
         yes = msg.addButton(
         'Yes', QtWidgets.QMessageBox.RejectRole)
-        msg.setDefaultButton(no)
+        msg.setDefaultButton(yes)
         msg.exec_()
         msg.deleteLater()
 
@@ -258,7 +258,7 @@ class RhymeWindow(QDialog):
         'No', QtWidgets.QMessageBox.AcceptRole)
         yes = msg.addButton(
         'Yes', QtWidgets.QMessageBox.RejectRole)
-        msg.setDefaultButton(no)
+        msg.setDefaultButton(yes)
         msg.exec_()
         msg.deleteLater()
 
