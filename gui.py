@@ -106,7 +106,7 @@ class Window(QDialog):
                   continue
 
             if previous_syllable_count is not None and current_syllable_count < previous_syllable_count:
-                  print(f"Stopping: {current_syllable_count} < {previous_syllable_count}")
+                  #print(f"Stopping: {current_syllable_count} < {previous_syllable_count}")
                   break
 
             # Fix missing space after colon
@@ -143,7 +143,7 @@ class Window(QDialog):
             if len(self.user_input.text()) == 0:
                 showError("Please input a word")
             else:
-                print("Chosen Word: {0}".format(self.user_input.text()))
+                # print("Chosen Word: {0}".format(self.user_input.text()))
                 rhymes = main.main(self.user_input.text())
                 if len(rhymes) != 0:
                     for label in self.created_label:
