@@ -27,8 +27,6 @@ class Window(QDialog):
         self.setWindowTitle("LyricLink")
         self.setFixedSize(self.WIDTH, self.HEIGHT)
 
-        print(self.windowTitle)
-
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("assets/lyriclink_logo.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
         self.setWindowIcon(icon)
