@@ -14,6 +14,15 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 import main
 import sys
+import os
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class IntroWindow(QDialog):
     WIDTH = 500
@@ -24,7 +33,7 @@ class IntroWindow(QDialog):
         self.setFixedSize(self.WIDTH, self.HEIGHT)
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets\lyriclink.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(resource_path("lyriclink.ico")), QtGui.QIcon.Selected, QtGui.QIcon.On)
         self.setWindowIcon(icon)
 
         self.buttonBox = QDialogButtonBox()
@@ -38,7 +47,7 @@ class IntroWindow(QDialog):
         self.buttonBox.addButton(self.rhymesButton, QDialogButtonBox.ActionRole)
         self.buttonBox.addButton(self.exitButton, QDialogButtonBox.ActionRole)
 
-        pixmap = QtGui.QPixmap("assets\lyriclink.png").scaled(300,300)
+        pixmap = QtGui.QPixmap(resource_path("lyriclink.png")).scaled(300,300)
         self.title_image = QLabel()
         self.title_image.setPixmap(pixmap)
 
