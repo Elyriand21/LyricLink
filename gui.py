@@ -96,7 +96,7 @@ class RhymeWindow(QDialog):
         self.setFixedSize(self.WIDTH, self.HEIGHT)
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets\lyriclink.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap(resource_path("lyriclink.ico")), QtGui.QIcon.Selected, QtGui.QIcon.On)
         self.setWindowIcon(icon)
 
         # Scroll Area Setup
