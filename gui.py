@@ -80,47 +80,32 @@ class Window(QDialog):
       def addLabels(self, target_x, target_y):
             quantity = len(self.collected_rhymes)
             started = False
-            print(f"Start: {self.finishedAddingLabels}")
-            for syllableAmount in range(quantity):
-                  # If for some reason, it combines "almost" rhymes with "perfect" rhymes on page, stop the for loop
-                  if started == True and self.collected_rhymes[syllableAmount][0:10] == "1 syllable":
+            for i in range(quantity):
+                  if started == True and self.collected_rhymes[i][0:10] == "1 syllable":
                         break
-                  # If you've already searched and search again, remove labels
-                  if self.finishedAddingLabels == True:
-                        for label in self.created_label:
-                              # print(label.parent())
-                              label.deleteLater()
-                              # print(f"Destroyed label: {label}")
-                        print("Finished Deleting labels")
-                        break
-                  else:
-                        print("Creating Labels...")
-                        label = QtWidgets.QLabel(self.frame)
-                        # If it's a 1 syllable
-                        if int(self.collected_rhymes[syllableAmount][0:2].strip()) == 1:
-                              label.setText(self.collected_rhymes[syllableAmount][0:11])
-                        # If it's any syllable > 1 but < 10
-                        elif int(self.collected_rhymes[syllableAmount][0:2].strip()) != 1 and int(self.collected_rhymes[syllableAmount][0:2].strip()) < 10:
-                              label.setText(self.collected_rhymes[syllableAmount][0:12])
-                        # If it's any syllable amount > 10
-                        elif int(self.collected_rhymes[syllableAmount][0:2].strip()) != 1 and int(self.collected_rhymes[syllableAmount][0:2].strip()) > 10:
-                              label.setText(self.collected_rhymes[syllableAmount][0:13])
-                        label.setGeometry(0, (50 + (10 * syllableAmount)), (len(label.text()) + 100), 50)
-                        label.show()
-                        self.created_label.append(label)
-                        if started == False:
-                              started = True
-            # If you've cleared all the labels, call the function again to add the new labels
-            if self.finishedAddingLabels == True:
-                  print("Telling the program you wanna add new labels")
-                  self.finishedAddingLabels = False
-                  print("Calling addLabels again...")
-                  self.addLabels(0,50)
-            else:
-                  print("You're done adding labels")
-                  self.finishedAddingLabels = not self.finishedAddingLabels
+                  rhyme_text = self.collected_rhymes[i]
+
+                  label = QtWidgets.QLabel(self.frame)
+
+                  # Safely extract syllable count substring
+                  syllable = rhyme_text[0:2].strip()
+                  try:
+                        syllable_int = int(syllable)
+                        if syllable_int == 1:
+                              label.setText(rhyme_text[0:11])
+                        elif syllable_int < 10:
+                              label.setText(rhyme_text[0:12])
+                        else:
+                              label.setText(rhyme_text[0:13])
+                  except ValueError:
+                        label.setText(rhyme_text)
+
+                  label.setGeometry(0, (50 + (10 * i)), len(label.text()) + 100, 50)
+                  label.show()
+                  self.created_label.append(label)
+                  if started == False:
+                        started = True
       def getRhymes(self):
-            # Sets the error text for no rhyme error
             def showError(self, text):
                   msg = QMessageBox()
                   msg.setWindowTitle("Error")
@@ -129,16 +114,19 @@ class Window(QDialog):
                   msg.setStandardButtons(QMessageBox.Ok)
                   msg.setDefaultButton(QMessageBox.Ok)
                   x = msg.exec_()
-            
-            # If the user does not put a word
+
             if len(self.user_input.text()) == 0:
                   showError(self, "Please input a word")
-            # Print the chosen word
             else:
                   print("Chosen Word: {0}".format(self.user_input.text()))
-                  # If rhymes exist
-                  if len(main.main(self.user_input.text())) != 0:
-                        self.collected_rhymes = main.main(self.user_input.text())
+                  rhymes = main.main(self.user_input.text())
+                  if len(rhymes) != 0:
+                        # Clear any existing labels
+                        for label in self.created_label:
+                              label.deleteLater()
+                        self.created_label.clear()
+
+                        self.collected_rhymes = rhymes
                         self.addLabels(0, 50)
                   else:
                         showError(self, "No rhymes found")
@@ -169,3 +157,48 @@ if __name__ == '__main__':
       win.show()
       # Start the app
       sys.exit(app.exec())
+
+
+
+#  def addLabels(self, target_x, target_y):
+#             quantity = len(self.collected_rhymes)
+#             started = False
+#             print(f"Start: {self.finishedAddingLabels}")
+#             for syllableAmount in range(quantity):
+#                   # If for some reason, it combines "almost" rhymes with "perfect" rhymes on page, stop the for loop
+#                   if started == True and self.collected_rhymes[syllableAmount][0:10] == "1 syllable":
+#                         break
+#                   # If you've already searched and search again, remove labels
+#                   if self.finishedAddingLabels == True:
+#                         for label in self.created_label:
+#                               # print(label.parent())
+#                               label.deleteLater()
+#                               # print(f"Destroyed label: {label}")
+#                         print("Finished Deleting labels")
+#                         break
+#                   else:
+#                         print("Creating Labels...")
+#                         label = QtWidgets.QLabel(self.frame)
+#                         # If it's a 1 syllable
+#                         if int(self.collected_rhymes[syllableAmount][0:2].strip()) == 1:
+#                               label.setText(self.collected_rhymes[syllableAmount][0:11])
+#                         # If it's any syllable > 1 but < 10
+#                         elif int(self.collected_rhymes[syllableAmount][0:2].strip()) != 1 and int(self.collected_rhymes[syllableAmount][0:2].strip()) < 10:
+#                               label.setText(self.collected_rhymes[syllableAmount][0:12])
+#                         # If it's any syllable amount > 10
+#                         elif int(self.collected_rhymes[syllableAmount][0:2].strip()) != 1 and int(self.collected_rhymes[syllableAmount][0:2].strip()) > 10:
+#                               label.setText(self.collected_rhymes[syllableAmount][0:13])
+#                         label.setGeometry(0, (50 + (10 * syllableAmount)), (len(label.text()) + 100), 50)
+#                         label.show()
+#                         self.created_label.append(label)
+#                         if started == False:
+#                               started = True
+#             # If you've cleared all the labels, call the function again to add the new labels
+#             if self.finishedAddingLabels == True:
+#                   print("Telling the program you wanna add new labels")
+#                   self.finishedAddingLabels = False
+#                   print("Calling addLabels again...")
+#                   self.addLabels(0,50)
+#             else:
+#                   print("You're done adding labels")
+#                   self.finishedAddingLabels = not self.finishedAddingLabels
