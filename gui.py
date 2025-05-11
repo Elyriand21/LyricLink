@@ -15,20 +15,79 @@ from PyQt5.QtCore import Qt
 import main
 import sys
 
-class Window(QDialog):
+class IntroWindow(QDialog):
+    WIDTH = 500
+    HEIGHT = 300
+    def __init__(self):
+        super(IntroWindow, self).__init__()
+        self.setWindowTitle("LyricLink")
+        self.setFixedSize(self.WIDTH, self.HEIGHT)
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("assets\lyriclink.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        self.setWindowIcon(icon)
+
+        self.buttonBox = QDialogButtonBox()
+        self.rhymesButton = QPushButton("Rhymes", self)
+        self.rhymesButton.clicked.connect(self.goToRhymes)
+        self.rhymesButton.setStyleSheet("background-color: #bfbfbf")
+        self.exitButton = QPushButton("Exit", self)
+        self.exitButton.setStyleSheet("background-color: #bfbfbf")
+        self.exitButton.clicked.connect(self.confirmExit)
+        self.exitButton.setAutoDefault(False)
+        self.buttonBox.addButton(self.rhymesButton, QDialogButtonBox.ActionRole)
+        self.buttonBox.addButton(self.exitButton, QDialogButtonBox.ActionRole)
+
+        pixmap = QtGui.QPixmap("assets\lyriclink.png").scaled(300,300)
+        self.title_image = QLabel()
+        self.title_image.setPixmap(pixmap)
+
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(self.title_image)
+        mainLayout.addWidget(self.buttonBox)
+        mainLayout.setAlignment(self.buttonBox, Qt.AlignCenter)
+        mainLayout.setAlignment(self.title_image, Qt.AlignCenter)
+
+        self.setStyleSheet("background-color: #8c8c8c")
+
+        self.setLayout(mainLayout)
+    def goToRhymes(self):
+         self.w = RhymeWindow()
+         self.w.show()
+         self.hide()
+    def confirmExit(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Confirmation")
+        msg.setText("Are you sure you want to exit?")
+        msg.setIcon(QMessageBox.Question)
+        no = msg.addButton(
+        'No', QtWidgets.QMessageBox.AcceptRole)
+        yes = msg.addButton(
+        'Yes', QtWidgets.QMessageBox.RejectRole)
+        msg.setDefaultButton(yes)
+        msg.exec_()
+        msg.deleteLater()
+
+        if msg.clickedButton() is yes:
+             print("made it")
+             self.close()
+    
+     
+
+class RhymeWindow(QDialog):
     WIDTH = 1000
     HEIGHT = 1000
 
     collected_rhymes = []
     
     def __init__(self):
-        super(Window, self).__init__()
+        super(RhymeWindow, self).__init__()
         self.created_label = []
         self.setWindowTitle("LyricLink")
         self.setFixedSize(self.WIDTH, self.HEIGHT)
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/lyriclink_logo.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        icon.addPixmap(QtGui.QPixmap("assets\lyriclink.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
         self.setWindowIcon(icon)
 
         # Scroll Area Setup
@@ -45,7 +104,6 @@ class Window(QDialog):
 
         # Input setup
         self.user_input = QLineEdit()
-        self.user_input.textChanged.connect(self.handleTextChange)
         self.user_input.setMinimumWidth(10)
         self.user_input.setMaximumWidth(50)
 
@@ -54,12 +112,17 @@ class Window(QDialog):
         # Buttons
         self.buttonBox = QDialogButtonBox()
         self.searchButton: QPushButton = QPushButton("Search")
-        self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
+        self.backButton: QPushButton = QPushButton("Back")
+        self.exitButton = QPushButton("Exit", self)
+        self.exitButton.clicked.connect(self.confirmExit)
+        self.exitButton.setAutoDefault(False)
         self.buttonBox.addButton(self.searchButton, QDialogButtonBox.ActionRole)
+        self.buttonBox.addButton(self.backButton, QDialogButtonBox.ActionRole)
+        self.buttonBox.addButton(self.exitButton, QDialogButtonBox.ActionRole)
 
         self.searchButton.clicked.connect(self.getRhymes)
-        self.cancelButton.clicked.connect(self.reject)
-        self.cancelButton.setAutoDefault(False)
+        self.backButton.clicked.connect(self.goToIntro)
+        self.backButton.setAutoDefault(False)
         self.buttonBox.accepted.connect(self.getRhymes)
         self.searchButton.setDefault(True)
 
@@ -69,6 +132,11 @@ class Window(QDialog):
         mainLayout.addWidget(self.scroll_area)
         mainLayout.addWidget(self.buttonBox)
         self.setLayout(mainLayout)
+
+    def goToIntro(self):
+         self.w = IntroWindow()
+         self.w.show()
+         self.hide()
 
     def addLabels(self):
       quantity = len(self.collected_rhymes)
@@ -165,24 +233,44 @@ class Window(QDialog):
             showError("Something weird happened... Try again")
 
     def createForm(self):
-        layout = QFormLayout()
+        layout = QGridLayout()
 
         # Purpose label
         purpose_label = QLabel("LyricLink helps you find rhymes to overcome writer's block.")
         purpose_label.setAlignment(Qt.AlignCenter)
         purpose_label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
-        layout.addRow(purpose_label)
+        layout.addWidget(purpose_label, 0, 2, Qt.AlignCenter)
+        layout.addWidget(QLabel("Enter your word below"), 1, 2, Qt.AlignCenter)
+        layout.addWidget(self.user_input, 2, 2, Qt.AlignCenter)
 
-        layout.addRow(QLabel("Enter your word here: "), self.user_input)
+        # layout.addRow(QLabel("Enter your word here: "), self.user_input)
+        
 
         self.frame = QFrame()
         self.frame.setLayout(layout)
 
-    def handleTextChange(self):
-        pass
+    def confirmExit(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Confirmation")
+        msg.setText("Are you sure you want to exit?")
+        msg.setIcon(QMessageBox.Question)
+        no = msg.addButton(
+        'No', QtWidgets.QMessageBox.AcceptRole)
+        yes = msg.addButton(
+        'Yes', QtWidgets.QMessageBox.RejectRole)
+        msg.setDefaultButton(yes)
+        msg.exec_()
+        msg.deleteLater()
+
+        if msg.clickedButton() is yes:
+             print("made it")
+             self.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    win = Window()
+    # win = RhymeWindow()
+    win = IntroWindow()
     win.show()
     sys.exit(app.exec())
+
+
