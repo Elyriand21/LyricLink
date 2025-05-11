@@ -4,7 +4,7 @@
 #
 #           TO-DO
 #     • Create the labels to display what the purpose of the software is
-#     • Fix the issue with the program crashing after searching twice
+#     • Fix the spacing between headers and rhymes
 #
 ##############################################
 
@@ -16,154 +16,175 @@ import main
 import sys
 
 class Window(QDialog):
-      WIDTH = 1000
-      HEIGHT = 1000
+    WIDTH = 1000
+    HEIGHT = 1000
 
-      collected_rhymes = []
-      def __init__(self):
-            super(Window, self).__init__()
-            # Creates an array to hold created labels
-            self.created_label = []
+    collected_rhymes = []
 
-            self.new_label = QLabel()
-            # Sets value for number of added labels
-            self.finishedAddingLabels = False
-            # Set Window Title
-            self.setWindowTitle("RhymeBot")
-            # Set size
-            self.setFixedSize(self.WIDTH,self.HEIGHT)
-            # Creates the window icon
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap("assets/rhymebot_logo.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
-            # Sets the window icon
-            self.setWindowIcon(icon)
-            # Create a group box to house all of the components
-            self.frame = QFrame()
-            # Create an area for the user input
-            self.user_input = QLineEdit()
-            self.user_input.textChanged.connect(self.handleTextChange)
-            self.user_input.setMinimumWidth(10)
-            self.user_input.setMaximumWidth(50)
-            # Function that builds the form
-            self.createForm()
-            # Create the box to hold the buttons
-            self.buttonBox = QDialogButtonBox()
+    def __init__(self):
+        super(Window, self).__init__()
+        self.created_label = []
+        self.setWindowTitle("LyricLink")
+        self.setFixedSize(self.WIDTH, self.HEIGHT)
 
-            # Create the buttons
-            self.searchButton: QPushButton = QPushButton("Search")
-            self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
-            # Add them to the button box
-            self.buttonBox.addButton(self.searchButton, QDialogButtonBox.ActionRole)
-            # Connect buttons to form
-            self.searchButton.clicked.connect(self.getRhymes)     # When search button is clicked
-            self.cancelButton.clicked.connect(self.reject)  # When cancel button is clicked
-            self.cancelButton.setAutoDefault(False)
-            # Whenever the search button is clicked, do getRhymes
-            self.buttonBox.accepted.connect(self.getRhymes)
-            self.searchButton.setDefault(True)  # Make the search button the default button to execute when Enter is pressed
-            # creating a vertical layout
-            mainLayout = QVBoxLayout()
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("assets/lyriclink_logo.ico"), QtGui.QIcon.Selected, QtGui.QIcon.On)
+        self.setWindowIcon(icon)
 
-            # Adding form group box to the layout
-            mainLayout.addWidget(self.frame)
-            # Adding button box to the layout
-            mainLayout.addWidget(self.buttonBox)
-            # Setting lay out
-            self.setLayout(mainLayout)
-      # Function to handle adding labels
-      def addLabels(self, target_x, target_y):
-            quantity = len(self.collected_rhymes)
-            started = False
-            previous_syllable_count = None
-            current_y = target_y
-            frame_width = self.frame.width()
-            padding = 20
+        # Scroll Area Setup
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
 
-            for i in range(quantity):
-                  rhyme_text = self.collected_rhymes[i]
+        # Content widget inside the scroll area
+        self.scroll_widget = QWidget()
+        self.scroll_layout = QVBoxLayout(self.scroll_widget)
+        self.scroll_layout.setAlignment(Qt.AlignTop)
+        self.scroll_layout.setSpacing(8)  # Reduced spacing
 
-                  # Parse syllable count safely
-                  try:
-                        current_syllable_count = int(rhyme_text.split()[0])
-                  except (ValueError, IndexError):
-                        continue  # skip malformed entry
+        self.scroll_area.setWidget(self.scroll_widget)
 
-                  # Exit if next section has lower syllable count
-                  if previous_syllable_count is not None and current_syllable_count < previous_syllable_count:
-                        print(f"Stopping: {current_syllable_count} < {previous_syllable_count}")
-                        break
+        # Input setup
+        self.user_input = QLineEdit()
+        self.user_input.textChanged.connect(self.handleTextChange)
+        self.user_input.setMinimumWidth(10)
+        self.user_input.setMaximumWidth(50)
 
-                  # Add space after colon if missing
-                  if ":" in rhyme_text and not rhyme_text[rhyme_text.index(":") + 1] == " ":
-                        rhyme_text = rhyme_text.replace(":", ": ")
+        self.createForm()
 
-                  print(rhyme_text)
+        # Buttons
+        self.buttonBox = QDialogButtonBox()
+        self.searchButton: QPushButton = QPushButton("Search")
+        self.cancelButton: QPushButton = self.buttonBox.addButton(QDialogButtonBox.Cancel)
+        self.buttonBox.addButton(self.searchButton, QDialogButtonBox.ActionRole)
 
-                  label = QtWidgets.QLabel(self.frame)
+        self.searchButton.clicked.connect(self.getRhymes)
+        self.cancelButton.clicked.connect(self.reject)
+        self.cancelButton.setAutoDefault(False)
+        self.buttonBox.accepted.connect(self.getRhymes)
+        self.searchButton.setDefault(True)
+
+        # Layout
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(self.frame)
+        mainLayout.addWidget(self.scroll_area)
+        mainLayout.addWidget(self.buttonBox)
+        self.setLayout(mainLayout)
+
+    def addLabels(self):
+      quantity = len(self.collected_rhymes)
+      previous_syllable_count = None
+
+      current_group = []
+      current_count = None
+
+      def add_group_to_layout(syllable_count, group):
+            if not group:
+                  return
+            header = QLabel(f"{syllable_count} syllable{'s' if syllable_count != 1 else ''}")
+            header.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 0px;")  # Reduced margin
+            self.scroll_layout.addWidget(header)
+            self.created_label.append(header)
+
+            for item in group:
+                  # Remove the syllable count from the rhyme label
+                  parts = item.split()
+                  word_only = ' '.join(parts[2:]) if len(parts) > 1 else item
+
+                  label = QLabel(word_only)
                   label.setWordWrap(True)
-                  label.setText(rhyme_text)
-                  label.setFixedWidth(frame_width - padding)
 
-                  label.adjustSize()
-                  height = label.sizeHint().height()
-
-                  label.setGeometry(target_x, current_y, frame_width - padding, height)
-                  label.show()
-
+                  self.scroll_layout.addWidget(label)
                   self.created_label.append(label)
-                  current_y += height + 10
 
-                  previous_syllable_count = current_syllable_count
-                  started = True
-      def getRhymes(self):
-            def showError(self, text):
-                  msg = QMessageBox()
-                  msg.setWindowTitle("Error")
-                  msg.setText(text)
-                  msg.setIcon(QMessageBox.Question)
-                  msg.setStandardButtons(QMessageBox.Ok)
-                  msg.setDefaultButton(QMessageBox.Ok)
-                  x = msg.exec_()
+
+      for i in range(quantity):
+            rhyme_text = self.collected_rhymes[i]
 
             try:
-                  if len(self.user_input.text()) == 0:
-                        showError(self, "Please input a word")
-                  else:
-                        print("Chosen Word: {0}".format(self.user_input.text()))
-                        rhymes = main.main(self.user_input.text())
-                        if len(rhymes) != 0:
-                              # Clear any existing labels
-                              for label in self.created_label:
-                                    label.deleteLater()
-                              self.created_label.clear()
+                  current_syllable_count = int(rhyme_text.split()[0])
+            except (ValueError, IndexError):
+                  continue
 
-                              self.collected_rhymes = rhymes
-                              self.addLabels(0, 50)
-                        else:
-                              showError(self, "No rhymes found")
-            except Exception as e:
-                  showError(self, "Something weird happened... Try again")
-            
-      def createForm(self):
-            # Create form layout
-            layout = QFormLayout()
-            #Adds row for user input
-            layout.addRow(QLabel("Enter your word here: "), self.user_input)
-            # Setting the layout
-            self.frame.setLayout(layout)
-      def handleTextChange(self):
-            self.user_input = self.user_input
+            if previous_syllable_count is not None and current_syllable_count < previous_syllable_count:
+                  print(f"Stopping: {current_syllable_count} < {previous_syllable_count}")
+                  break
 
+            # Fix missing space after colon
+            if ":" in rhyme_text and not rhyme_text[rhyme_text.index(":") + 1] == " ":
+                  rhyme_text = rhyme_text.replace(":", ": ")
+
+            if current_count is None:
+                  current_count = current_syllable_count
+
+            if current_syllable_count != current_count:
+                  add_group_to_layout(current_count, current_group)
+                  current_group = []
+                  current_count = current_syllable_count
+
+            current_group.append(rhyme_text)
+            previous_syllable_count = current_syllable_count
+
+      add_group_to_layout(current_count, current_group)
+
+      # Ensure the layout has minimal spacing
+      self.scroll_layout.setSpacing(4)  # Reduced overall spacing between widgets
+
+    def getRhymes(self):
+        def showError(text):
+            msg = QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText(text)
+            msg.setIcon(QMessageBox.Question)
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.setDefaultButton(QMessageBox.Ok)
+            msg.exec_()
+
+        try:
+            if len(self.user_input.text()) == 0:
+                showError("Please input a word")
+            else:
+                print("Chosen Word: {0}".format(self.user_input.text()))
+                rhymes = main.main(self.user_input.text())
+                if len(rhymes) != 0:
+                    for label in self.created_label:
+                        label.deleteLater()
+                    self.created_label.clear()
+                    for i in reversed(range(self.scroll_layout.count())):
+                        item = self.scroll_layout.itemAt(i)
+                        if item.widget():
+                            item.widget().deleteLater()
+                        elif item.spacerItem():
+                            self.scroll_layout.removeItem(item)
+
+                    self.collected_rhymes = rhymes
+                    self.addLabels()
+                else:
+                    showError("No rhymes found")
+        except Exception as e:
+            showError("Something weird happened... Try again")
+
+    def createForm(self):
+        layout = QFormLayout()
+
+        # Purpose label
+        purpose_label = QLabel("LyricLink helps you find rhymes to overcome writer's block.")
+        purpose_label.setAlignment(Qt.AlignCenter)
+        purpose_label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;")
+        layout.addRow(purpose_label)
+
+        layout.addRow(QLabel("Enter your word here: "), self.user_input)
+
+        self.frame = QFrame()
+        self.frame.setLayout(layout)
+
+    def handleTextChange(self):
+        pass
 
 if __name__ == '__main__':
-      # Instantiate our application
-      app = QApplication(sys.argv)
-      # Instantiate our window
-      win = Window()
-      # Show the window
-      win.show()
-      # Start the app
-      sys.exit(app.exec())
+    app = QApplication(sys.argv)
+    win = Window()
+    win.show()
+    sys.exit(app.exec())
 
 
 
