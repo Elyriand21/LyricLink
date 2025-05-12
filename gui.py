@@ -40,12 +40,16 @@ class IntroWindow(QDialog):
         self.rhymesButton = QPushButton("Rhymes", self)
         self.rhymesButton.clicked.connect(self.goToRhymes)
         self.rhymesButton.setStyleSheet("background-color: #bfbfbf")
+        self.synsButton = QPushButton("Synonyms/Antonyms", self)
+        self.synsButton.clicked.connect(self.toSynonyms)
+        self.synsButton.setStyleSheet("background-color: #bfbfbf")
         self.exitButton = QPushButton("Exit", self)
         self.exitButton.setStyleSheet("background-color: #bfbfbf")
         self.exitButton.clicked.connect(self.confirmExit)
         self.exitButton.setAutoDefault(False)
         self.buttonBox.addButton(self.rhymesButton, QDialogButtonBox.ActionRole)
         self.buttonBox.addButton(self.exitButton, QDialogButtonBox.ActionRole)
+        self.buttonBox.addButton(self.synsButton, QDialogButtonBox.ActionRole)
 
         pixmap = QtGui.QPixmap(resource_path("lyriclink.png")).scaled(300,300)
         self.title_image = QLabel()
@@ -60,10 +64,17 @@ class IntroWindow(QDialog):
         self.setStyleSheet("background-color: #8c8c8c")
 
         self.setLayout(mainLayout)
+    # To go to the section for rhymes
     def goToRhymes(self):
          self.w = RhymeWindow()
          self.w.show()
          self.hide()
+    # To go to the section for synonyms/antonyms
+    def toSynonyms(self):
+         self.w = Synonyms()
+         self.w.show()
+         self.hide()
+         
     def confirmExit(self):
         msg = QMessageBox()
         msg.setWindowTitle("Confirmation")
@@ -80,6 +91,69 @@ class IntroWindow(QDialog):
         if msg.clickedButton() is yes:
              print("made it")
              self.close()
+
+class Synonyms(QDialog):
+    WIDTH = 900
+    HEIGHT = 700
+
+    collected_syns = []
+    collected_ants = []
+
+    def __init__(self):
+                super(Synonyms, self).__init__()
+                self.setWindowTitle("LyricLink: Synonyms/Antonyms")
+                self.setFixedSize(self.WIDTH, self.HEIGHT)
+
+                icon = QtGui.QIcon()
+                icon.addPixmap(QtGui.QPixmap(resource_path("lyriclink.ico")), QtGui.QIcon.Selected, QtGui.QIcon.On)
+                self.setWindowIcon(icon)
+
+                # Scroll Area Setup
+                self.scroll_area = QScrollArea()
+                self.scroll_area.setWidgetResizable(True)
+                # Content widget inside the scroll area
+                self.scroll_widget = QWidget()
+                self.scroll_layout = QVBoxLayout(self.scroll_widget)
+                self.scroll_layout.setAlignment(Qt.AlignTop)
+                self.scroll_layout.setSpacing(8)  # Reduced spacing
+
+                self.scroll_area.setWidget(self.scroll_widget)
+
+                self.buttonBox = QDialogButtonBox()
+                self.backButton: QPushButton = QPushButton("Back")
+                self.exitButton = QPushButton("Exit", self)
+                self.exitButton.clicked.connect(self.confirmExit)
+                self.exitButton.setAutoDefault(False)
+                self.buttonBox.addButton(self.backButton, QDialogButtonBox.ActionRole)
+                self.buttonBox.addButton(self.exitButton, QDialogButtonBox.ActionRole)
+
+                self.backButton.clicked.connect(self.goToIntro)
+                self.backButton.setAutoDefault(False)
+
+                # Layout
+                mainLayout = QVBoxLayout()
+                mainLayout.addWidget(self.buttonBox)
+                self.setLayout(mainLayout)
+    def goToIntro(self):
+         self.w = IntroWindow()
+         self.w.show()
+         self.hide()
+
+    def confirmExit(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Confirmation")
+        msg.setText("Are you sure you want to exit?")
+        msg.setIcon(QMessageBox.Question)
+        no = msg.addButton(
+        'No', QtWidgets.QMessageBox.AcceptRole)
+        yes = msg.addButton(
+        'Yes', QtWidgets.QMessageBox.RejectRole)
+        msg.setDefaultButton(yes)
+        msg.exec_()
+        msg.deleteLater()
+
+        if msg.clickedButton() is yes:
+             self.close()
     
      
 
@@ -92,7 +166,7 @@ class RhymeWindow(QDialog):
     def __init__(self):
         super(RhymeWindow, self).__init__()
         self.created_label = []
-        self.setWindowTitle("LyricLink")
+        self.setWindowTitle("LyricLink: Rhymes")
         self.setFixedSize(self.WIDTH, self.HEIGHT)
 
         icon = QtGui.QIcon()
@@ -222,7 +296,7 @@ class RhymeWindow(QDialog):
                 showError("Please input a word")
             else:
                 # print("Chosen Word: {0}".format(self.user_input.text()))
-                rhymes = main.main(self.user_input.text())
+                rhymes = main.scrapeRhymes(self.user_input.text())
                 if len(rhymes) != 0:
                     for label in self.created_label:
                         label.deleteLater()

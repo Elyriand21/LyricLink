@@ -1,16 +1,9 @@
-################################
-#          TO-DO
-# 
-
-
-
 import requests, bs4, sys
 import re
 
 rhymes = []
 
-def main(word):
-
+def scrapeRhymes(word):
     res = requests.get(f"https://www.rhymezone.com/r/rhyme.cgi?Word={word}&typeofrhyme=perfect&org1=syl&org2=l&org3=y")
     try:
         res.raise_for_status()
