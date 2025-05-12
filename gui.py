@@ -3,8 +3,6 @@
 #     Software to help break writer's block
 #
 #           TO-DO
-#     • Create the labels to display what the purpose of the software is
-#     • Fix the spacing between headers and rhymes
 #
 ##############################################
 
@@ -240,7 +238,6 @@ class RhymeWindow(QDialog):
                   # Remove the syllable count from the rhyme label
                   parts = item.split()
                   word_only = ' '.join(parts[2:]) if len(parts) > 1 else item
-                  print(word_only)
 
                   label = QLabel(word_only)
                   label.setWordWrap(True)
@@ -354,5 +351,3 @@ if __name__ == '__main__':
     win = IntroWindow()
     win.show()
     sys.exit(app.exec())
-
-
